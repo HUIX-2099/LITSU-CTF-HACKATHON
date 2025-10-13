@@ -1,0 +1,141 @@
+export interface ScoreboardEntry {
+  rank: number
+  id: string
+  name: string
+  score: number
+  solves: number
+  lastSolve: string
+  isTeam?: boolean
+}
+
+export const mockScoreboard: ScoreboardEntry[] = [
+  {
+    rank: 1,
+    id: "1",
+    name: "CyberNinjas",
+    score: 2450,
+    solves: 15,
+    lastSolve: "2 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 2,
+    id: "2",
+    name: "HackTheBox",
+    score: 2200,
+    solves: 14,
+    lastSolve: "3 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 3,
+    id: "3",
+    name: "SecurityFirst",
+    score: 2100,
+    solves: 13,
+    lastSolve: "5 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 4,
+    id: "4",
+    name: "elite_hacker",
+    score: 1950,
+    solves: 12,
+    lastSolve: "1 hour ago",
+  },
+  {
+    rank: 5,
+    id: "5",
+    name: "BinaryExplorers",
+    score: 1800,
+    solves: 11,
+    lastSolve: "4 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 6,
+    id: "6",
+    name: "crypto_master",
+    score: 1750,
+    solves: 11,
+    lastSolve: "6 hours ago",
+  },
+  {
+    rank: 7,
+    id: "7",
+    name: "PwnStars",
+    score: 1650,
+    solves: 10,
+    lastSolve: "2 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 8,
+    id: "8",
+    name: "web_wizard",
+    score: 1600,
+    solves: 10,
+    lastSolve: "7 hours ago",
+  },
+  {
+    rank: 9,
+    id: "9",
+    name: "ReverseEngineers",
+    score: 1550,
+    solves: 9,
+    lastSolve: "3 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 10,
+    id: "10",
+    name: "forensics_pro",
+    score: 1500,
+    solves: 9,
+    lastSolve: "8 hours ago",
+  },
+  {
+    rank: 11,
+    id: "11",
+    name: "CodeBreakers",
+    score: 1400,
+    solves: 8,
+    lastSolve: "5 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 12,
+    id: "12",
+    name: "pwn_noob",
+    score: 1350,
+    solves: 8,
+    lastSolve: "9 hours ago",
+  },
+  {
+    rank: 13,
+    id: "13",
+    name: "ExploitExperts",
+    score: 1300,
+    solves: 7,
+    lastSolve: "4 hours ago",
+    isTeam: true,
+  },
+  {
+    rank: 14,
+    id: "14",
+    name: "script_kiddie",
+    score: 1250,
+    solves: 7,
+    lastSolve: "10 hours ago",
+  },
+  {
+    rank: 15,
+    id: "15",
+    name: "SecuritySquad",
+    score: 1200,
+    solves: 6,
+    lastSolve: "6 hours ago",
+    isTeam: true,
+  },
+]
