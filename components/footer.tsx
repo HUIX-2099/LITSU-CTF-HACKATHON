@@ -71,10 +71,7 @@ export function Footer() {
               <div className="font-mono text-xs text-black/40">Monochrome</div>
             </div>
 
-            <div className="text-sm text-black/60 text-center">
-              <span className="text-black/40">Developed by</span>{" "}
-              <span className="text-black font-bold">Victor Edet Coleman</span>
-            </div>
+            <div className="text-sm text-black/60 text-center"></div>
 
             <div className="text-xs text-black/40 font-mono">© 2025 LITSU</div>
           </div>

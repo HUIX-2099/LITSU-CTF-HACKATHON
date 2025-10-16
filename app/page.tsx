@@ -40,9 +40,7 @@ export default async function Home() {
                 <p className="modern-prose mb-4 sm:mb-6 break-words hyphens-auto">
                   A cybersecurity competition platform designed for Liberian students to develop their skills in ethical hacking, penetration testing, and cybersecurity.
                 </p>
-                <p className="modern-caption break-words">
-                  Built by HUIX-2099. Developed by Victor Edet Coleman.
-                </p>
+                <p className="modern-caption break-words">Built by HUIX-2099.</p>
               </div>
 
               <div className="modern-section mb-6 sm:mb-8 max-w-xl">

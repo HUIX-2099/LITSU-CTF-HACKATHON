@@ -5,11 +5,52 @@ import Image from "next/image"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Shield, User, LogOut, Menu, Flag, Users, Trophy, Info } from "lucide-react"
-import { useState } from "react"
+import { useEffect, useState } from "react"
 
 export function Navbar() {
   const { user, logout } = useAuth()
   const [open, setOpen] = useState(false)
+  const [deviceType, setDeviceType] = useState<"desktop" | "tablet" | "phone" | "vr">("desktop")
+
+  useEffect(() => {
+    let mounted = true
+    const detect = async () => {
+      try {
+        // Basic VR detection via WebXR
+        const xrSupported = typeof navigator !== "undefined" && (navigator as any).xr && typeof (navigator as any).xr.isSessionSupported === "function"
+        if (xrSupported) {
+          const supported = await (navigator as any).xr.isSessionSupported("immersive-vr").catch(() => false)
+          if (mounted && supported) {
+            setDeviceType("vr")
+            return
+          }
+        }
+      } catch {}
+
+      if (typeof window !== "undefined") {
+        const ua = navigator.userAgent || ""
+        const isPhone = /Mobi|Android|iPhone|iPod/i.test(ua)
+        const isTablet = /iPad|Tablet|Nexus 7|Nexus 10|KFAPWI|SM-T\w+/i.test(ua)
+        const prefersTouch = window.matchMedia && window.matchMedia("(pointer: coarse)").matches
+        const width = window.innerWidth
+        if (isPhone || (prefersTouch && width < 768)) {
+          setDeviceType("phone")
+        } else if (isTablet || width < 1024) {
+          setDeviceType("tablet")
+        } else {
+          setDeviceType("desktop")
+        }
+      }
+    }
+
+    detect()
+    const onResize = () => detect()
+    window.addEventListener("resize", onResize)
+    return () => {
+      mounted = false
+      window.removeEventListener("resize", onResize)
+    }
+  }, [])
 
   return (
     <nav className="modern-nav bg-white sticky top-0 z-50">
@@ -22,16 +63,19 @@ export function Navbar() {
           </div>
         </Link>
 
-        <button
-          className="lg:hidden p-2 rounded-md border border-[#e5e5e5]"
-          onClick={() => setOpen(!open)}
-          aria-label="Toggle menu"
-        >
-          <Menu className="h-5 w-5" />
-        </button>
+        {(deviceType === "phone" || deviceType === "tablet") && (
+          <button
+            className="p-2 rounded-md border border-[#e5e5e5]"
+            onClick={() => setOpen(!open)}
+            aria-label="Toggle menu"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+        )}
 
         {user ? (
-          <div className="hidden lg:flex items-center gap-8">
+          deviceType === "desktop" ? (
+          <div className="flex items-center gap-8">
             <div className="flex items-center gap-6">
               <Link href="/challenges" className="modern-nav-link">
                 Challenges
@@ -69,8 +113,10 @@ export function Navbar() {
               </Button>
             </div>
           </div>
+          ) : null
         ) : (
-          <div className="hidden lg:flex items-center gap-6">
+          deviceType === "desktop" ? (
+          <div className="flex items-center gap-6">
             <Link href="/about" className="modern-nav-link">
               About
             </Link>
@@ -88,10 +134,11 @@ export function Navbar() {
               </Link>
             </div>
           </div>
+          ) : null
         )}
       </div>
       {/* Mobile menu */}
-      {open && (
+      {open && (deviceType === "phone" || deviceType === "tablet") && (
         <div className="lg:hidden border-t border-[#e5e5e5] bg-white">
           <div className="container mx-auto py-2">
             <div className="divide-y divide-[#e5e5e5]">
@@ -127,7 +174,8 @@ export function Navbar() {
       )}
 
       {/* Mobile bottom tab bar */}
-      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[#e5e5e5] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+      {(deviceType === "phone" || deviceType === "tablet") && (
+      <div className="fixed bottom-0 left-0 right-0 z-40 border-t border-[#e5e5e5] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
         <div className="max-w-screen-md mx-auto px-4 py-2">
           <div className="grid grid-cols-4 gap-2 text-xs">
             <Link href="/challenges" className="flex flex-col items-center justify-center py-1">
@@ -157,6 +205,7 @@ export function Navbar() {
           )}
         </div>
       </div>
+      )}
     </nav>
   )
 }
