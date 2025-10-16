@@ -8,6 +8,7 @@ import {
   updateChallenge,
   deleteChallenge,
   type DBChallenge,
+  type NewChallengeInput,
 } from "@/lib/db"
 import { getCurrentUser } from "./auth"
 
@@ -50,7 +51,7 @@ export async function getAllChallengesAction() {
   }
 }
 
-export async function createChallengeAction(challenge: Omit<DBChallenge, "id" | "createdAt" | "updatedAt" | "solves">) {
+export async function createChallengeAction(challenge: NewChallengeInput) {
   try {
     const currentUser = await getCurrentUser()
     if (!currentUser || currentUser.role !== "admin") {

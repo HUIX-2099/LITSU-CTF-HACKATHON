@@ -1,7 +1,6 @@
 "use client"
 
 import { createContext, useContext, useState, useEffect, type ReactNode } from "react"
-import { loginAction, registerAction, logoutAction, getCurrentUser } from "@/lib/actions/auth"
 
 interface User {
   id: string
@@ -15,8 +14,12 @@ interface User {
 
 interface AuthContextType {
   user: User | null
-  login: (email: string, password: string) => Promise<{ success: boolean; error?: string }>
-  register: (username: string, email: string, password: string) => Promise<{ success: boolean; error?: string }>
+  login: (email: string, password: string) => Promise<{ success: boolean; user?: User; error?: string }>
+  register: (
+    username: string,
+    email: string,
+    password: string,
+  ) => Promise<{ success: boolean; user?: User; error?: string }>
   logout: () => Promise<void>
   isLoading: boolean
   refreshUser: () => Promise<void>
@@ -30,39 +33,51 @@ export function AuthProvider({ children }: { children: ReactNode }) {
 
   useEffect(() => {
     const loadUser = async () => {
-      const currentUser = await getCurrentUser()
-      setUser(currentUser)
+      const res = await fetch("/api/auth/me", { cache: "no-store" })
+      const data = await res.json()
+      setUser(data.user || null)
       setIsLoading(false)
     }
     loadUser()
   }, [])
 
   const login = async (email: string, password: string) => {
-    const result = await loginAction(email, password)
-    if (result.success && result.user) {
-      setUser(result.user)
-      return { success: true }
+    const res = await fetch("/api/auth/login", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ email, password }),
+    })
+    const data = await res.json()
+    if (data.success && data.user) {
+      setUser(data.user as User)
+      return { success: true, user: data.user as User }
     }
-    return { success: false, error: result.error }
+    return { success: false, error: data.error || "Login failed" }
   }
 
   const register = async (username: string, email: string, password: string) => {
-    const result = await registerAction(username, email, password)
-    if (result.success && result.user) {
-      setUser(result.user)
-      return { success: true }
+    const res = await fetch("/api/auth/register", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ username, email, password }),
+    })
+    const data = await res.json()
+    if (data.success && data.user) {
+      setUser(data.user as User)
+      return { success: true, user: data.user as User }
     }
-    return { success: false, error: result.error }
+    return { success: false, error: data.error || "Registration failed" }
   }
 
   const logout = async () => {
-    await logoutAction()
+    await fetch("/api/auth/logout", { method: "POST" })
     setUser(null)
   }
 
   const refreshUser = async () => {
-    const currentUser = await getCurrentUser()
-    setUser(currentUser)
+    const res = await fetch("/api/auth/me", { cache: "no-store" })
+    const data = await res.json()
+    setUser(data.user || null)
   }
 
   return (

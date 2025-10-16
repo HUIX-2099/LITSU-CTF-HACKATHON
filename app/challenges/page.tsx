@@ -6,7 +6,7 @@ import { ChallengeCard } from "@/components/challenge-card"
 import { ChallengeModal } from "@/components/challenge-modal"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
-import { Search } from "lucide-react"
+import { Search, Flag, Filter } from "lucide-react"
 import { Footer } from "@/components/footer"
 import { getAllChallengesAction } from "@/lib/actions/challenges"
 import { useAuth } from "@/lib/auth-context"
@@ -51,11 +51,11 @@ export default function ChallengesPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-[#191919]">
+      <div className="modern-page">
         <Navbar />
-        <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+        <main className="container mx-auto px-6 py-12">
           <div className="text-center py-20">
-            <p className="text-white/60 uppercase tracking-wide font-bold">Loading challenges...</p>
+            <div className="modern-label">Loading challenges...</div>
           </div>
         </main>
       </div>
@@ -63,40 +63,48 @@ export default function ChallengesPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#191919]">
+    <div className="modern-page">
       <Navbar />
 
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-8 md:py-12">
+      <main className="container mx-auto px-6 py-12">
         <div className="mb-12">
-          <h1 className="text-6xl font-black tracking-tighter uppercase mb-4">Challenges</h1>
-          <p className="text-white/60 text-lg">
-            <span className="text-primary font-bold">{solvedChallenges.size}</span> of{" "}
-            <span className="text-white font-bold">{challenges.length}</span> solved
-          </p>
+          <div className="flex items-center gap-4 mb-8">
+            <Flag className="h-10 w-10 text-[#1a1a1a]" />
+            <div>
+              <h1 className="modern-h2 text-4xl">Challenges</h1>
+              <div className="modern-label">Test your skills</div>
+            </div>
+          </div>
+          <div className="modern-section max-w-md">
+            <div className="modern-label mb-2">Progress</div>
+            <div className="font-bold text-lg">
+              {solvedChallenges.size} of {challenges.length} solved
+            </div>
+          </div>
         </div>
 
-        <div className="mb-12 space-y-6">
+        <div className="mb-12 space-y-8">
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-[#737373]" />
             <Input
-              placeholder="SEARCH CHALLENGES..."
+              placeholder="Search challenges..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-12 bg-[#1e1e1e] border-2 border-white/20 h-14 font-mono uppercase"
+              className="modern-input pl-10 h-12"
             />
           </div>
 
-          <div className="space-y-4">
+          <div className="modern-grid-2">
             <div>
-              <p className="text-xs uppercase tracking-widest text-white/40 mb-3 font-bold">Category</p>
-              <div className="flex gap-3 flex-wrap">
+              <div className="modern-label mb-4">Category</div>
+              <div className="flex gap-2 flex-wrap">
                 {categories.map((cat) => (
                   <Button
                     key={cat}
                     variant={categoryFilter === cat ? "default" : "outline"}
                     size="sm"
                     onClick={() => setCategoryFilter(cat)}
-                    className="uppercase tracking-wide font-bold"
+                    className={categoryFilter === cat ? "modern-button" : "modern-button-outline"}
                   >
                     {cat}
                   </Button>
@@ -105,15 +113,15 @@ export default function ChallengesPage() {
             </div>
 
             <div>
-              <p className="text-xs uppercase tracking-widest text-white/40 mb-3 font-bold">Difficulty</p>
-              <div className="flex gap-3 flex-wrap">
+              <div className="modern-label mb-4">Difficulty</div>
+              <div className="flex gap-2 flex-wrap">
                 {difficulties.map((diff) => (
                   <Button
                     key={diff}
                     variant={difficultyFilter === diff ? "default" : "outline"}
                     size="sm"
                     onClick={() => setDifficultyFilter(diff)}
-                    className="uppercase tracking-wide font-bold"
+                    className={difficultyFilter === diff ? "modern-button" : "modern-button-outline"}
                   >
                     {diff}
                   </Button>
@@ -123,7 +131,7 @@ export default function ChallengesPage() {
           </div>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <div className="modern-grid-3">
           {filteredChallenges.map((challenge) => (
             <ChallengeCard
               key={challenge.id}
@@ -135,8 +143,8 @@ export default function ChallengesPage() {
         </div>
 
         {filteredChallenges.length === 0 && (
-          <div className="text-center py-20 border-2 border-white/20">
-            <p className="text-white/40 uppercase tracking-wide font-bold">No challenges found</p>
+          <div className="modern-section text-center py-20">
+            <div className="modern-label">No challenges found</div>
           </div>
         )}
       </main>

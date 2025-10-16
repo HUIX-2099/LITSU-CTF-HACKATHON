@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Image from "next/image"
 import { Navbar } from "@/components/navbar"
-import { Shield, Users, Trophy, Code, Lock, Globe, Award } from "lucide-react"
+import { Shield, Users, Trophy, Code, Lock, Globe } from "lucide-react"
 import { getAllUsersAction } from "@/lib/actions/users"
 import { getAllChallengesAction } from "@/lib/actions/challenges"
 import { getTeamsAction } from "@/lib/actions/teams"

@@ -1,44 +1,50 @@
 "use client"
 
-import { useState } from "react"
+import { useEffect, useState } from "react"
 import { Navbar } from "@/components/navbar"
 import { Card } from "@/components/ui/card"
 import { Button } from "@/components/ui/button"
 import { Badge } from "@/components/ui/badge"
 import { CreateTeamDialog } from "@/components/create-team-dialog"
 import { JoinTeamDialog } from "@/components/join-team-dialog"
-import { Users, Trophy, Crown, UserPlus, Plus, Copy, Check } from "lucide-react"
-import { mockTeams, type Team } from "@/lib/teams-data"
+import { Users, Trophy, UserPlus, Plus, Copy, Check } from "lucide-react"
+import { getTeamsAction, createTeamAction, joinTeamAction } from "@/lib/actions/teams"
+import type { Team as DBTeam } from "@/lib/db"
 import { Footer } from "@/components/footer"
 
 export default function TeamsPage() {
-  const [teams, setTeams] = useState<Team[]>(mockTeams)
+  const [teams, setTeams] = useState<DBTeam[]>([])
   const [createDialogOpen, setCreateDialogOpen] = useState(false)
   const [joinDialogOpen, setJoinDialogOpen] = useState(false)
-  const [selectedTeam, setSelectedTeam] = useState<Team | null>(null)
+  const [selectedTeam, setSelectedTeam] = useState<DBTeam | null>(null)
   const [copiedCode, setCopiedCode] = useState<string | null>(null)
+  const [loading, setLoading] = useState<boolean>(true)
 
-  const handleCreateTeam = (name: string) => {
-    const newTeam: Team = {
-      id: Date.now().toString(),
-      name,
-      captain: "current_user",
-      members: [{ id: "current", username: "current_user", score: 0, role: "captain" }],
-      score: 0,
-      solves: 0,
-      createdAt: new Date().toISOString().split("T")[0],
-      inviteCode: Math.random().toString(36).substring(2, 10).toUpperCase(),
+  const loadTeams = async () => {
+    setLoading(true)
+    const res = await getTeamsAction()
+    if (res.success && res.teams) {
+      // res.teams include memberDetails; keep base Team shape
+      setTeams(res.teams as unknown as DBTeam[])
     }
-    setTeams([...teams, newTeam])
+    setLoading(false)
   }
 
-  const handleJoinTeam = (inviteCode: string) => {
-    const team = teams.find((t) => t.inviteCode === inviteCode)
-    if (team) {
-      alert(`Successfully joined ${team.name}!`)
-    } else {
-      alert("Invalid invite code")
-    }
+  useEffect(() => {
+    loadTeams()
+  }, [])
+
+  const handleCreateTeam = async (name: string) => {
+    const res = await createTeamAction(name)
+    if (!res.success) alert(res.error || "Failed to create team")
+    await loadTeams()
+  }
+
+  const handleJoinTeam = async (inviteCode: string) => {
+    const res = await joinTeamAction(inviteCode)
+    if (!res.success) alert(res.error || "Invalid invite code")
+    else alert("Joined team successfully")
+    await loadTeams()
   }
 
   const copyInviteCode = (code: string) => {
@@ -74,7 +80,7 @@ export default function TeamsPage() {
           {teams.map((team) => (
             <Card
               key={team.id}
-              className="p-6 bg-card border-border hover:border-primary/50 transition-colors cursor-pointer"
+              className="p-6 bg-white border border-neutral-200 hover:border-primary/50 transition-colors cursor-pointer"
               onClick={() => setSelectedTeam(team)}
             >
               <div className="flex items-start justify-between mb-4">
@@ -84,25 +90,17 @@ export default function TeamsPage() {
                   </div>
                   <div>
                     <h3 className="text-xl font-semibold">{team.name}</h3>
-                    <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                      <Crown className="h-3 w-3" />
-                      <span>{team.captain}</span>
-                    </div>
                   </div>
                 </div>
               </div>
 
               <div className="space-y-3">
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Score</span>
+                  <span className="text-sm text-black/60">Score</span>
                   <span className="font-bold text-primary">{team.score}</span>
                 </div>
                 <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Solves</span>
-                  <span className="font-semibold">{team.solves}</span>
-                </div>
-                <div className="flex items-center justify-between">
-                  <span className="text-sm text-muted-foreground">Members</span>
+                  <span className="text-sm text-black/60">Members</span>
                   <Badge variant="outline">{team.members.length}</Badge>
                 </div>
               </div>
@@ -137,17 +135,13 @@ export default function TeamsPage() {
         {/* Team Details Modal */}
         {selectedTeam && (
           <div
-            className="fixed inset-0 bg-background/80 backdrop-blur-sm z-50 flex items-center justify-center p-4"
+            className="fixed inset-0 bg-black/40 z-50 flex items-center justify-center p-4"
             onClick={() => setSelectedTeam(null)}
           >
-            <Card className="max-w-2xl w-full p-6 bg-card border-border" onClick={(e) => e.stopPropagation()}>
+            <Card className="max-w-2xl w-full p-6 bg-white border border-neutral-200" onClick={(e) => e.stopPropagation()}>
               <div className="flex items-start justify-between mb-6">
                 <div>
                   <h2 className="text-3xl font-bold mb-2">{selectedTeam.name}</h2>
-                  <div className="flex items-center gap-2 text-muted-foreground">
-                    <Crown className="h-4 w-4" />
-                    <span>Captain: {selectedTeam.captain}</span>
-                  </div>
                 </div>
                 <Button variant="outline" onClick={() => setSelectedTeam(null)}>
                   Close
@@ -158,10 +152,6 @@ export default function TeamsPage() {
                 <div className="text-center p-4 rounded-lg bg-primary/10 border border-primary/20">
                   <div className="text-2xl font-bold text-primary mb-1">{selectedTeam.score}</div>
                   <div className="text-sm text-muted-foreground">Total Score</div>
-                </div>
-                <div className="text-center p-4 rounded-lg bg-secondary/10 border border-secondary/20">
-                  <div className="text-2xl font-bold text-secondary mb-1">{selectedTeam.solves}</div>
-                  <div className="text-sm text-muted-foreground">Solves</div>
                 </div>
                 <div className="text-center p-4 rounded-lg bg-accent/10 border border-accent/20">
                   <div className="text-2xl font-bold text-accent mb-1">{selectedTeam.members.length}</div>
@@ -175,27 +165,22 @@ export default function TeamsPage() {
                   Team Members
                 </h3>
                 <div className="space-y-2">
-                  {selectedTeam.members.map((member) => (
+                  {selectedTeam.members.map((memberId) => (
                     <div
-                      key={member.id}
+                      key={memberId}
                       className="flex items-center justify-between p-3 rounded-lg bg-muted/30 border border-border"
                     >
                       <div className="flex items-center gap-3">
                         <div className="h-10 w-10 rounded-full bg-primary/10 flex items-center justify-center">
-                          <span className="font-semibold text-primary">{member.username[0].toUpperCase()}</span>
+                          <span className="font-semibold text-primary">{memberId.substring(0,1).toUpperCase()}</span>
                         </div>
                         <div>
-                          <div className="font-medium">{member.username}</div>
-                          {member.role === "captain" && (
-                            <Badge variant="outline" className="text-xs">
-                              Captain
-                            </Badge>
-                          )}
+                          <div className="font-medium">{memberId}</div>
                         </div>
                       </div>
                       <div className="flex items-center gap-2">
                         <Trophy className="h-4 w-4 text-primary" />
-                        <span className="font-semibold">{member.score}</span>
+                        <span className="font-semibold">—</span>
                       </div>
                     </div>
                   ))}

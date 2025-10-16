@@ -5,7 +5,7 @@ export interface User {
   id: string
   username: string
   email: string
-  password: string // In production, this would be hashed
+  password: string // hashed using scrypt
   role: "user" | "admin"
   teamId?: string
   score: number
@@ -94,9 +94,9 @@ export interface Server {
   requests: number
 }
 
-// In-memory storage (simulating a database)
+// In-memory storage with JSON file persistence
 // In production, this would be replaced with actual database calls
-const users: User[] = [
+let users: User[] = [
   {
     id: "1",
     username: "admin",
@@ -112,7 +112,7 @@ const users: User[] = [
 ]
 
 let teams: Team[] = []
-const submissions: Submission[] = []
+let submissions: Submission[] = []
 
 const LIBERIA_COUNTIES = [
   { id: "montserrado", name: "Montserrado" },
@@ -206,6 +206,83 @@ const servers: Server[] = [
   })),
 ]
 
+// --- Simple file persistence to app data directory ---
+// We keep a minimal persistence layer using Node fs. This runs only on the server.
+import { promises as fs } from "fs"
+import path from "path"
+import { randomBytes, scrypt as _scrypt, timingSafeEqual } from "crypto"
+import { promisify } from "util"
+const scrypt = promisify(_scrypt)
+
+const DATA_DIR = path.join(process.cwd(), ".next-data")
+const USERS_FILE = path.join(DATA_DIR, "users.json")
+const TEAMS_FILE = path.join(DATA_DIR, "teams.json")
+const SUBMISSIONS_FILE = path.join(DATA_DIR, "submissions.json")
+const CHALLENGES_FILE = path.join(DATA_DIR, "challenges.json")
+
+async function ensureDataDir(): Promise<void> {
+  try {
+    await fs.mkdir(DATA_DIR, { recursive: true })
+  } catch {}
+}
+
+async function loadJson<T>(filePath: string, fallback: T): Promise<T> {
+  try {
+    const data = await fs.readFile(filePath, "utf8")
+    return JSON.parse(data) as T
+  } catch {
+    return fallback
+  }
+}
+
+async function saveJson<T>(filePath: string, data: T): Promise<void> {
+  await ensureDataDir()
+  await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf8")
+}
+
+// Load persisted data at module init (best-effort; do not block if fails)
+void (async () => {
+  users = await loadJson<User[]>(USERS_FILE, users)
+  // Migration: ensure all stored passwords are hashed (format: "salt:hash").
+  // For any user whose password doesn't contain a ':', treat it as plaintext and hash it.
+  try {
+    let migrated = false
+    for (let i = 0; i < users.length; i++) {
+      const u = users[i]
+      if (u && typeof u.password === "string" && !u.password.includes(":")) {
+        u.password = await hashPassword(u.password)
+        migrated = true
+      }
+    }
+    if (migrated) {
+      await saveJson(USERS_FILE, users)
+    }
+  } catch {}
+  teams = await loadJson<Team[]>(TEAMS_FILE, teams)
+  submissions = await loadJson<Submission[]>(SUBMISSIONS_FILE, submissions)
+  // Challenges are seeded; only override if file exists
+  const persistedChallenges = await loadJson<DBChallenge[] | null>(CHALLENGES_FILE, null as unknown as null)
+  if (persistedChallenges && Array.isArray(persistedChallenges) && persistedChallenges.length) {
+    challenges = persistedChallenges
+  }
+})()
+
+// Password hashing utilities
+export async function hashPassword(password: string): Promise<string> {
+  const salt = randomBytes(16)
+  const derivedKey = (await scrypt(password, salt, 64)) as Buffer
+  return `${salt.toString("hex")}:${derivedKey.toString("hex")}`
+}
+
+export async function verifyPassword(password: string, stored: string): Promise<boolean> {
+  const [saltHex, keyHex] = stored.split(":")
+  if (!saltHex || !keyHex) return false
+  const salt = Buffer.from(saltHex, "hex")
+  const key = Buffer.from(keyHex, "hex")
+  const derived = (await scrypt(password, salt, 64)) as Buffer
+  return timingSafeEqual(derived, key)
+}
+
 // User operations
 export async function createUser(username: string, email: string, password: string): Promise<User> {
   const existingUser = users.find((u) => u.email === email || u.username === username)
@@ -217,7 +294,7 @@ export async function createUser(username: string, email: string, password: stri
     id: Date.now().toString(),
     username,
     email,
-    password, // In production, hash this with bcrypt
+    password: await hashPassword(password),
     role: "user",
     score: 0,
     solvedChallenges: [],
@@ -227,6 +304,7 @@ export async function createUser(username: string, email: string, password: stri
   }
 
   users.push(newUser)
+  await saveJson(USERS_FILE, users)
   return newUser
 }
 
@@ -245,6 +323,7 @@ export async function updateUser(id: string, updates: Partial<User>): Promise<Us
   }
 
   users[userIndex] = { ...users[userIndex], ...updates }
+  await saveJson(USERS_FILE, users)
   return users[userIndex]
 }
 
@@ -265,6 +344,7 @@ export async function deleteUser(id: string): Promise<void> {
   }
 
   users.splice(userIndex, 1)
+  await saveJson(USERS_FILE, users)
 }
 
 export async function updateUserStatus(id: string, isOnline: boolean): Promise<void> {
@@ -296,6 +376,7 @@ export async function createTeam(name: string, creatorId: string): Promise<Team>
   }
 
   teams.push(newTeam)
+  await saveJson(TEAMS_FILE, teams)
 
   // Update user's teamId
   await updateUser(creatorId, { teamId: newTeam.id })
@@ -315,6 +396,7 @@ export async function joinTeam(userId: string, inviteCode: string): Promise<Team
 
   await updateUser(userId, { teamId: team.id })
 
+  await saveJson(TEAMS_FILE, teams)
   return team
 }
 
@@ -335,6 +417,7 @@ export async function leaveTeam(userId: string, teamId: string): Promise<void> {
     }
   }
   await updateUser(userId, { teamId: undefined })
+  await saveJson(TEAMS_FILE, teams)
 }
 
 export async function updateTeam(id: string, updates: Partial<Team>): Promise<Team> {
@@ -344,6 +427,7 @@ export async function updateTeam(id: string, updates: Partial<Team>): Promise<Te
   }
 
   teams[teamIndex] = { ...teams[teamIndex], ...updates }
+  await saveJson(TEAMS_FILE, teams)
   return teams[teamIndex]
 }
 
@@ -356,6 +440,7 @@ export async function deleteTeam(id: string): Promise<void> {
     }
   }
   teams = teams.filter((t) => t.id !== id)
+  await saveJson(TEAMS_FILE, teams)
 }
 
 export async function getTeamMembers(teamId: string): Promise<User[]> {
@@ -383,6 +468,7 @@ export async function submitFlag(userId: string, challengeId: string, flag: stri
   }
 
   submissions.push(submission)
+  await saveJson(SUBMISSIONS_FILE, submissions)
 
   if (correct) {
     const user = await getUserById(userId)
@@ -410,33 +496,41 @@ export async function submitFlag(userId: string, challengeId: string, flag: stri
   return correct
 }
 
+// Admin utilities
+export async function getSubmissionsByChallenge(challengeId: string): Promise<Submission[]> {
+  return submissions.filter((s) => s.challengeId === challengeId)
+}
+
+export async function getAllSubmissions(): Promise<Submission[]> {
+  return submissions
+}
+
+export async function getChallengeSubmissionsDetailed(
+  challengeId: string,
+): Promise<ChallengeAnswer[]> {
+  const subs = await getSubmissionsByChallenge(challengeId)
+  return subs
+    .sort((a, b) => new Date(b.timestamp).getTime() - new Date(a.timestamp).getTime())
+    .map((s) => {
+      const user = users.find((u) => u.id === s.userId)
+      const team = user?.teamId ? teams.find((t) => t.id === user.teamId) : undefined
+      return {
+        id: s.id,
+        userId: s.userId,
+        username: user?.username || "unknown",
+        teamId: team?.id,
+        teamName: team?.name,
+        county: user?.county,
+        flag: s.flag,
+        correct: s.correct,
+        timestamp: s.timestamp,
+      }
+    })
+}
+
 export async function getUserSubmissions(userId: string): Promise<Submission[]> {
   return submissions.filter((s) => s.userId === userId)
 }
-
-export async function createChallenge(
-  challenge: Omit<DBChallenge, "id" | "createdAt" | "updatedAt" | "solves">,
-): Promise<DBChallenge> {
-  const newChallenge: DBChallenge = {
-    ...challenge,
-    id: Date.now().toString(),
-    solves: 0,
-    createdAt: new Date().toISOString(),
-    updatedAt: new Date().toISOString(),
-    views: 0,
-    likes: 0,
-    likedBy: [],
-    answers: [],
-  }
-
-  challenges.push(newChallenge)
-  return newChallenge
-}
-
-export async function getAllChallenges(): Promise<DBChallenge[]> {
-  return challenges
-}
-
 export async function getChallengeById(id: string): Promise<DBChallenge | null> {
   return challenges.find((c) => c.id === id) || null
 }
@@ -452,11 +546,13 @@ export async function updateChallenge(id: string, updates: Partial<DBChallenge>)
     ...updates,
     updatedAt: new Date().toISOString(),
   }
+  await saveJson(CHALLENGES_FILE, challenges)
   return challenges[challengeIndex]
 }
 
 export async function deleteChallenge(id: string): Promise<void> {
   challenges = challenges.filter((c) => c.id !== id)
+  await saveJson(CHALLENGES_FILE, challenges)
 }
 
 export async function getAllServers(): Promise<Server[]> {
@@ -505,4 +601,47 @@ export async function toggleChallengeLike(challengeId: string, userId: string): 
 export async function getChallengeAnswers(challengeId: string): Promise<ChallengeAnswer[]> {
   const challenge = await getChallengeById(challengeId)
   return challenge?.answers || []
+}
+
+// Challenge listings and creation
+export async function getAllChallenges(): Promise<DBChallenge[]> {
+  return challenges
+}
+
+export type NewChallengeInput = {
+  title: string
+  description: string
+  category: "web" | "crypto" | "reverse" | "pwn" | "forensics" | "misc"
+  difficulty: "easy" | "medium" | "hard"
+  points: number
+  flag: string
+  tags: string[]
+  hints?: string[]
+  files?: string[]
+}
+
+export async function createChallenge(input: NewChallengeInput): Promise<DBChallenge> {
+  const now = new Date().toISOString()
+  const newChallenge: DBChallenge = {
+    id: Date.now().toString(),
+    title: input.title,
+    description: input.description,
+    category: input.category,
+    difficulty: input.difficulty,
+    points: input.points,
+    flag: input.flag,
+    solves: 0,
+    tags: input.tags || [],
+    files: input.files && input.files.length ? input.files : undefined,
+    hints: input.hints && input.hints.length ? input.hints : undefined,
+    createdAt: now,
+    updatedAt: now,
+    views: 0,
+    likes: 0,
+    likedBy: [],
+    answers: [],
+  }
+  challenges.push(newChallenge)
+  await saveJson(CHALLENGES_FILE, challenges)
+  return newChallenge
 }

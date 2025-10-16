@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1760629296560",
+    "userId": "1760629270617",
+    "challengeId": "1",
+    "flag": "fh",
+    "correct": false,
+    "timestamp": "2025-10-16T15:41:36.560Z"
+  },
+  {
+    "id": "1760629504820",
+    "userId": "1",
+    "challengeId": "1760629469921",
+    "flag": "scs",
+    "correct": false,
+    "timestamp": "2025-10-16T15:45:04.820Z"
+  },
+  {
+    "id": "1760629512029",
+    "userId": "1",
+    "challengeId": "1760629469921",
+    "flag": "SFC",
+    "correct": false,
+    "timestamp": "2025-10-16T15:45:12.029Z"
+  }
+]

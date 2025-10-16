@@ -1,0 +1,98 @@
+[
+  {
+    "id": "1",
+    "title": "Basic SQL Injection",
+    "description": "A simple login form is vulnerable to SQL injection. Can you bypass the authentication and retrieve the flag?",
+    "category": "web",
+    "difficulty": "easy",
+    "points": 100,
+    "flag": "CTF{sql_1nj3ct10n_b4s1cs}",
+    "solves": 234,
+    "tags": [
+      "sql",
+      "injection",
+      "web"
+    ],
+    "hints": [
+      "Try using ' OR '1'='1",
+      "Look at the SQL query structure"
+    ],
+    "createdAt": "2025-10-16T15:43:56.097Z",
+    "updatedAt": "2025-10-16T15:43:56.097Z",
+    "views": 0,
+    "likes": 0,
+    "likedBy": [],
+    "answers": []
+  },
+  {
+    "id": "3",
+    "title": "Hidden in Plain Sight",
+    "description": "We intercepted this image. There's something hidden inside it. Can you find the secret message?",
+    "category": "forensics",
+    "difficulty": "medium",
+    "points": 200,
+    "flag": "CTF{st3g4n0gr4phy_m4st3r}",
+    "solves": 123,
+    "tags": [
+      "steganography",
+      "image",
+      "forensics"
+    ],
+    "files": [
+      "challenge.png"
+    ],
+    "createdAt": "2025-10-16T15:43:56.097Z",
+    "updatedAt": "2025-10-16T15:43:56.097Z",
+    "views": 0,
+    "likes": 0,
+    "likedBy": [],
+    "answers": []
+  },
+  {
+    "id": "1760629469921",
+    "title": "LITSU TEST",
+    "description": "Download Windsurf Editor\nTry out Windsurf, the world's first agentic IDE with powerful AI Flow paradigm. Start generating AI-powered code and get analytics on your coding productivity!\n\nAvailable for macOS, Windows, and Linux",
+    "category": "crypto",
+    "difficulty": "medium",
+    "points": 100,
+    "flag": "S",
+    "solves": 0,
+    "tags": [
+      "SCDSc"
+    ],
+    "files": [
+      "wefcs"
+    ],
+    "hints": [
+      "SFC"
+    ],
+    "createdAt": "2025-10-16T15:44:29.921Z",
+    "updatedAt": "2025-10-16T15:44:29.921Z",
+    "views": 0,
+    "likes": 0,
+    "likedBy": [],
+    "answers": []
+  },
+  {
+    "id": "1760637117698",
+    "title": "egtwqeg",
+    "description": "wrhgwr",
+    "category": "web",
+    "difficulty": "easy",
+    "points": 100,
+    "flag": "wrh",
+    "solves": 0,
+    "tags": [
+      "wrh"
+    ],
+    "hints": [
+      "wrhb"
+    ],
+    "createdAt": "2025-10-16T17:51:57.698Z",
+    "updatedAt": "2025-10-16T17:51:57.698Z",
+    "views": 0,
+    "likes": 0,
+    "likedBy": [],
+    "answers": []
+  }
+]

@@ -69,9 +69,9 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
 
   return (
     <Dialog open={open} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl bg-[#0f0f0f] border-2 border-white/20 max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-2xl bg-white text-black border-2 border-black/20 max-h-[90vh] overflow-y-auto">
         <DialogHeader>
-          <DialogTitle className="text-2xl font-black uppercase tracking-tight">
+          <DialogTitle className="text-2xl font-black uppercase tracking-tight text-black">
             {challenge ? "Edit Challenge" : "Create Challenge"}
           </DialogTitle>
         </DialogHeader>
@@ -92,7 +92,7 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
             <Textarea
               value={formData.description}
               onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-              className="bg-[#1a1a1a] border-2 border-white/20 min-h-[100px]"
+              className="bg-white border-2 border-black/20 min-h-[100px] text-black"
               required
             />
           </div>
@@ -102,9 +102,11 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
               <Label className="text-sm font-bold uppercase tracking-wide">Category</Label>
               <Select
                 value={formData.category}
-                onValueChange={(value) => setFormData({ ...formData, category: value })}
+                onValueChange={(value: "web" | "crypto" | "reverse" | "pwn" | "forensics" | "misc") => 
+                  setFormData({ ...formData, category: value })
+                }
               >
-                <SelectTrigger className="bg-[#1a1a1a] border-2 border-white/20">
+                <SelectTrigger className="bg-white border-2 border-black/20 text-black">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -122,9 +124,11 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
               <Label className="text-sm font-bold uppercase tracking-wide">Difficulty</Label>
               <Select
                 value={formData.difficulty}
-                onValueChange={(value) => setFormData({ ...formData, difficulty: value })}
+                onValueChange={(value: "easy" | "medium" | "hard") => 
+                  setFormData({ ...formData, difficulty: value })
+                }
               >
-                <SelectTrigger className="bg-[#1a1a1a] border-2 border-white/20">
+                <SelectTrigger className="bg-white border-2 border-black/20 text-black">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
@@ -142,7 +146,7 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
               type="number"
               value={formData.points}
               onChange={(e) => setFormData({ ...formData, points: Number(e.target.value) })}
-              className="bg-[#1a1a1a] border-2 border-white/20"
+              className="bg-white border-2 border-black/20 text-black"
               required
             />
           </div>
@@ -152,7 +156,7 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
             <Input
               value={formData.flag}
               onChange={(e) => setFormData({ ...formData, flag: e.target.value })}
-              className="bg-[#1a1a1a] border-2 border-white/20 font-mono"
+              className="bg-white border-2 border-black/20 text-black font-mono"
               placeholder="CTF{...}"
               required
             />
@@ -173,7 +177,7 @@ export function AdminChallengeForm({ open, onClose, challenge, onSuccess }: Admi
             <Textarea
               value={formData.hints}
               onChange={(e) => setFormData({ ...formData, hints: e.target.value })}
-              className="bg-[#1a1a1a] border-2 border-white/20 min-h-[80px]"
+              className="bg-white border-2 border-black/20 min-h-[100px] text-black font-mono"
               placeholder="Hint 1&#10;Hint 2"
             />
           </div>

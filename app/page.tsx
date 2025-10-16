@@ -3,132 +3,230 @@ import Image from "next/image"
 import { Button } from "@/components/ui/button"
 import { Navbar } from "@/components/navbar"
 import { Footer } from "@/components/footer"
+import { Shield, Users, Flag, Trophy, Code, BookOpen, Settings, ArrowRight } from "lucide-react"
+import { getAllChallenges, getAllUsers, getAllTeams } from "@/lib/db"
 
-export default function Home() {
+export default async function Home() {
+  const [challenges, users, teams] = await Promise.all([
+    getAllChallenges(),
+    getAllUsers(),
+    getAllTeams(),
+  ])
+  const totalSolves = challenges.reduce((sum, c) => sum + (c.solves || 0), 0)
+  const year = new Date().getFullYear()
   return (
-    <div className="min-h-screen bg-[#191919]">
+    <div className="modern-page">
       <Navbar />
 
-      <main className="container mx-auto px-4 sm:px-6 lg:px-8 py-12 md:py-20">
-        <div className="max-w-6xl mx-auto mb-20 md:mb-32">
-          <div className="flex items-center gap-6 mb-12">
-            <Image src="/litsu-logo.jpg" alt="LITSU" width={120} height={120} className="rounded-full" />
+      <main className="container mx-auto px-6 py-16">
+        {/* Hero Section */}
+        <div className="max-w-7xl mx-auto mb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
             <div>
-              <div className="inline-block border-2 border-primary px-4 py-2 mb-4">
-                <span className="font-mono text-xs tracking-widest text-primary uppercase">Official CTF Platform</span>
+              <div className="flex items-center gap-4 mb-8">
+                <Image src="/litsu-logo.jpg" alt="LITSU" width={80} height={80} className="rounded-lg" />
+                <div>
+                  <div className="modern-label">Official CTF Platform</div>
+                  <div className="modern-h3">Liberia Information Technology Students Union</div>
+                </div>
               </div>
-              <h2 className="text-2xl md:text-3xl font-black tracking-tight uppercase text-white/90">
-                Liberia Information Technology Students Union
-              </h2>
-            </div>
-          </div>
 
-          <h1 className="text-[60px] md:text-[120px] leading-[0.9] font-black tracking-tighter mb-12 uppercase">
-            <span className="text-white">LITSU</span>
-            <br />
-            <span className="text-primary">CTF HACKATHON</span>
-          </h1>
+              <h1 className="modern-h1 mb-8">
+                <span className="block">LITSU</span>
+                <span className="block">CTF HACKATHON</span>
+              </h1>
 
-          <div className="max-w-3xl mb-12">
-            <p className="text-xl text-white/80 leading-relaxed mb-4">
-              Welcome to the official LITSU CTF Hackathon Platform - A cybersecurity competition platform designed for
-              Liberian students to develop their skills in ethical hacking, penetration testing, and cybersecurity.
-            </p>
-            <p className="text-base text-white/60 leading-relaxed mb-2">
-              <span className="text-primary font-bold">We think of the future and hope for progress</span>
-            </p>
-            <p className="text-sm text-white/50 leading-relaxed">
-              Built by HUIX-2099. Developed by Victor Edet Coleman.
-            </p>
-          </div>
+              <div className="max-w-2xl mb-12">
+                <p className="modern-prose mb-6">
+                  A cybersecurity competition platform designed for Liberian students to develop their skills in ethical hacking, penetration testing, and cybersecurity.
+                </p>
+                <p className="modern-caption">
+                  Built by HUIX-2099. Developed by Victor Edet Coleman.
+                </p>
+              </div>
 
-          <div className="border-2 border-white/20 p-8 mb-12 max-w-2xl">
-            <p className="text-sm uppercase tracking-wide font-bold mb-6">
-              You can login using one of the following accounts:
-            </p>
+              <div className="modern-section mb-8 max-w-xl">
+                <div className="modern-label mb-4">Demo Credentials</div>
+                <div className="space-y-3 font-mono text-sm">
+                  <div className="flex items-center gap-4">
+                    <span className="font-bold">admin@ctfd.io</span>
+                    <span className="modern-muted">admin123</span>
+                  </div>
+                  <div className="flex items-center gap-4">
+                    <span className="font-bold">user@ctfd.io</span>
+                    <span className="modern-muted">user123</span>
+                  </div>
+                </div>
+                <div className="mt-6 pt-4 modern-divider">
+                  <p className="text-sm modern-muted">
+                    Or{" "}
+                    <Link href="/register" className="font-bold hover:underline">
+                      register a new account
+                    </Link>
+                  </p>
+                </div>
+              </div>
 
-            <div className="space-y-4 font-mono">
               <div className="flex items-center gap-4">
-                <span className="text-white font-bold">admin</span>
-                <span className="text-primary">password</span>
-              </div>
-              <div className="flex items-center gap-4">
-                <span className="text-white font-bold">user</span>
-                <span className="text-primary">password</span>
-              </div>
-            </div>
-
-            <div className="mt-6 pt-6 border-t-2 border-white/10">
-              <p className="text-sm text-white/60">
-                Or you can{" "}
-                <Link href="/register" className="text-primary hover:underline font-bold">
-                  register a new account
+                <Link href="/login">
+                  <Button className="modern-button">
+                    Login to Platform
+                    <ArrowRight className="ml-2 h-4 w-4" />
+                  </Button>
                 </Link>
+                {/* Admin login removed; admins use the same login */}
+              </div>
+            </div>
+
+            <div className="relative">
+              <div className="modern-section p-12">
+                <div className="modern-number text-center mb-8">{year}</div>
+                <div className="modern-h3 text-center mb-8">Cybersecurity Excellence</div>
+                <div className="grid grid-cols-2 gap-8 text-center">
+                  <div>
+                    <div className="modern-number text-4xl">{challenges.length}</div>
+                    <div className="modern-label">Challenges</div>
+                  </div>
+                  <div>
+                    <div className="modern-number text-4xl">{users.length}</div>
+                    <div className="modern-label">Participants</div>
+                  </div>
+                </div>
+                <div className="text-center mt-8">
+                  <div className="modern-label">Total Solves</div>
+                  <div className="modern-number text-3xl">{totalSolves}</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Features Section */}
+        <div className="mb-24">
+          <div className="text-center mb-16">
+            <div className="modern-label mb-4">Platform Features</div>
+            <h2 className="modern-h2">Comprehensive CTF Experience</h2>
+          </div>
+
+          <div className="modern-grid-3">
+            <div className="modern-section group hover:border-[#1a1a1a] transition-colors">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-[#1a1a1a] flex items-center justify-center">
+                  <Flag className="h-6 w-6 text-white" />
+                </div>
+                <div className="modern-label">01</div>
+              </div>
+              <h3 className="modern-h3 mb-4">Challenge Categories</h3>
+              <p className="modern-prose">
+                Web exploitation, cryptography, reverse engineering, forensics, and binary exploitation challenges.
+              </p>
+            </div>
+
+            <div className="modern-section group hover:border-[#1a1a1a] transition-colors">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-[#1a1a1a] flex items-center justify-center">
+                  <Users className="h-6 w-6 text-white" />
+                </div>
+                <div className="modern-label">02</div>
+              </div>
+              <h3 className="modern-h3 mb-4">Team Collaboration</h3>
+              <p className="modern-prose">
+                Form teams, collaborate on challenges, and compete together in the leaderboard.
+              </p>
+            </div>
+
+            <div className="modern-section group hover:border-[#1a1a1a] transition-colors">
+              <div className="flex items-center gap-4 mb-6">
+                <div className="w-12 h-12 bg-[#1a1a1a] flex items-center justify-center">
+                  <Trophy className="h-6 w-6 text-white" />
+                </div>
+                <div className="modern-label">03</div>
+              </div>
+              <h3 className="modern-h3 mb-4">Real-time Scoring</h3>
+              <p className="modern-prose">
+                Live leaderboard updates, automated flag validation, and instant feedback on submissions.
               </p>
             </div>
           </div>
+        </div>
 
-          <div className="flex items-center gap-4">
-            <Link href="/login">
-              <Button size="lg" className="text-base px-8 py-6 uppercase tracking-wide font-black">
-                Click here to login
+        {/* Challenge Types */}
+        <div className="mb-24">
+          <div className="text-center mb-16">
+            <div className="modern-label mb-4">Challenge Types</div>
+            <h2 className="modern-h2">Diverse Learning Paths</h2>
+          </div>
+
+          <div className="modern-grid-2">
+            <div className="modern-section">
+              <div className="flex items-center gap-4 mb-6">
+                <Code className="h-8 w-8" />
+                <div className="modern-label">Programming</div>
+              </div>
+              <h3 className="modern-h3 mb-4">Code-Based Challenges</h3>
+              <p className="modern-prose mb-6">
+                Solve algorithmic problems, implement security solutions, and debug vulnerable code.
+              </p>
+              <div className="modern-data">
+                <div className="flex justify-between py-2 border-b border-[#e5e5e5]">
+                  <span>Difficulty Levels</span>
+                  <span>Easy → Hard</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-[#e5e5e5]">
+                  <span>Languages</span>
+                  <span>Python, C++, JavaScript</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span>Points Range</span>
+                  <span>100 - 500</span>
+                </div>
+              </div>
+            </div>
+
+            <div className="modern-section">
+              <div className="flex items-center gap-4 mb-6">
+                <BookOpen className="h-8 w-8" />
+                <div className="modern-label">Knowledge</div>
+              </div>
+              <h3 className="modern-h3 mb-4">Multiple Choice Questions</h3>
+              <p className="modern-prose mb-6">
+                Test your theoretical knowledge of cybersecurity concepts, protocols, and best practices.
+              </p>
+              <div className="modern-data">
+                <div className="flex justify-between py-2 border-b border-[#e5e5e5]">
+                  <span>Categories</span>
+                  <span>Network, Crypto, Web</span>
+                </div>
+                <div className="flex justify-between py-2 border-b border-[#e5e5e5]">
+                  <span>Time Limit</span>
+                  <span>2 minutes</span>
+                </div>
+                <div className="flex justify-between py-2">
+                  <span>Points Range</span>
+                  <span>50 - 200</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        {/* Admin Section */}
+        <div className="modern-section">
+          <div className="max-w-4xl mx-auto text-center">
+            <div className="flex items-center justify-center gap-4 mb-8">
+              <Settings className="h-8 w-8" />
+              <div className="modern-label">Administration</div>
+            </div>
+            <h2 className="modern-h2 mb-6">Platform Management</h2>
+            <p className="modern-prose mb-8 max-w-2xl mx-auto">
+              Comprehensive admin dashboard for managing challenges, users, teams, and monitoring platform activity in real-time.
+            </p>
+            <Link href="/admin">
+              <Button className="modern-button">
+                Access Admin Panel
+                <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
             </Link>
-          </div>
-        </div>
-
-        <div className="mb-20 md:mb-32">
-          <h2 className="text-5xl font-black tracking-tighter uppercase mb-12">
-            <span className="text-white">Plus </span>
-            <span className="text-primary">Features</span>
-          </h2>
-
-          <div className="grid md:grid-cols-3 gap-6">
-            <Link
-              href="/challenges"
-              className="border-2 border-white/20 p-8 hover:border-primary transition-colors group"
-            >
-              <div className="font-mono text-xs text-white/40 mb-4 tracking-widest">01</div>
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-3 group-hover:text-primary transition-colors">
-                Unlockable Challenges
-              </h3>
-              <p className="text-sm text-white/60 leading-relaxed">Progressive challenge system with dependencies</p>
-            </Link>
-
-            <Link
-              href="/challenges"
-              className="border-2 border-white/20 p-8 hover:border-primary transition-colors group"
-            >
-              <div className="font-mono text-xs text-white/40 mb-4 tracking-widest">02</div>
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-3 group-hover:text-primary transition-colors">
-                Programming Challenges
-              </h3>
-              <p className="text-sm text-white/60 leading-relaxed">Code-based challenges with automated testing</p>
-            </Link>
-
-            <Link
-              href="/challenges"
-              className="border-2 border-white/20 p-8 hover:border-primary transition-colors group"
-            >
-              <div className="font-mono text-xs text-white/40 mb-4 tracking-widest">03</div>
-              <h3 className="text-2xl font-black uppercase tracking-tight mb-3 group-hover:text-primary transition-colors">
-                Multiple Choice Questions
-              </h3>
-              <p className="text-sm text-white/60 leading-relaxed">Quiz-style challenges for knowledge testing</p>
-            </Link>
-          </div>
-        </div>
-
-        <div className="border-2 border-primary p-6 md:p-12 mb-20 md:mb-32">
-          <div className="max-w-3xl">
-            <h2 className="text-4xl font-black tracking-tighter uppercase mb-6">Admin Panel</h2>
-            <p className="text-lg text-white/80 leading-relaxed mb-8">
-              Use the{" "}
-              <Link href="/admin" className="text-primary hover:underline font-bold">
-                Admin Panel
-              </Link>{" "}
-              to change whatever you'd like with the admin account.
-            </p>
           </div>
         </div>
       </main>
@@ -137,3 +235,4 @@ export default function Home() {
     </div>
   )
 }
+

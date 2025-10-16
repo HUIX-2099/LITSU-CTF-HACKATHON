@@ -3,11 +3,10 @@
 import { Card } from "@/components/ui/card"
 import { Badge } from "@/components/ui/badge"
 import { Trophy, Users } from "lucide-react"
-import type { Challenge } from "@/lib/challenges-data"
-import { categoryBgColors, difficultyColors } from "@/lib/challenges-data"
+import type { DBChallenge } from "@/lib/db"
 
 interface ChallengeCardProps {
-  challenge: Challenge
+  challenge: DBChallenge
   onClick: () => void
   solved?: boolean
 }
@@ -15,42 +14,40 @@ interface ChallengeCardProps {
 export function ChallengeCard({ challenge, onClick, solved }: ChallengeCardProps) {
   return (
     <Card
-      className={`p-6 cursor-pointer transition-all hover:border-primary hover:shadow-lg hover:shadow-primary/20 ${
-        solved
-          ? "bg-[#0a0a0a] border-2 border-green-500/50"
-          : "bg-[#0f0f0f] border-2 border-white/20 hover:bg-[#1a1a1a]"
+      className={`p-6 cursor-pointer transition-all bg-white text-black border border-neutral-200 hover:border-black ${
+        solved ? "opacity-90" : ""
       }`}
       onClick={onClick}
     >
       <div className="flex items-start justify-between mb-4">
         <div className="flex items-center gap-2">
-          <Badge className={`${categoryBgColors[challenge.category]} border-2 uppercase font-bold tracking-wide`}>
+          <Badge variant="outline" className="border border-neutral-200 uppercase font-bold tracking-wide">
             {challenge.category}
           </Badge>
-          <Badge variant="outline" className={`${difficultyColors[challenge.difficulty]} border-2 uppercase font-bold`}>
+          <Badge variant="outline" className="border border-neutral-200 uppercase font-bold">
             {challenge.difficulty}
           </Badge>
         </div>
-        <div className="flex items-center gap-1 text-primary font-black text-lg">
+        <div className="flex items-center gap-1 text-black font-black text-lg">
           <Trophy className="h-5 w-5" />
           <span>{challenge.points}</span>
         </div>
       </div>
 
-      <h3 className="text-2xl font-black tracking-tight uppercase mb-3 text-white">{challenge.title}</h3>
+      <h3 className="text-2xl font-black tracking-tight uppercase mb-3">{challenge.title}</h3>
 
-      <div className="bg-[#1a1a1a] border border-white/10 p-4 mb-4 rounded">
-        <p className="text-sm text-white/70 line-clamp-3 leading-relaxed">{challenge.description}</p>
+      <div className="bg-white border border-neutral-200 p-4 mb-4">
+        <p className="text-sm text-black/70 line-clamp-3 leading-relaxed">{challenge.description}</p>
       </div>
 
-      <div className="flex items-center justify-between text-sm pt-3 border-t border-white/10">
-        <div className="flex items-center gap-2 text-white/60 font-mono">
+      <div className="flex items-center justify-between text-sm pt-3 border-t border-neutral-200">
+        <div className="flex items-center gap-2 text-black/60 font-mono">
           <Users className="h-4 w-4" />
           <span className="font-bold">{challenge.solves}</span>
           <span className="uppercase text-xs">solves</span>
         </div>
         {solved && (
-          <Badge className="bg-green-500/20 text-green-400 border-2 border-green-500/50 uppercase font-bold">
+          <Badge className="bg-black text-white border border-black uppercase font-bold">
             Solved
           </Badge>
         )}
@@ -58,3 +55,4 @@ export function ChallengeCard({ challenge, onClick, solved }: ChallengeCardProps
     </Card>
   )
 }
+

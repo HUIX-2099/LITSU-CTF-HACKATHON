@@ -1,0 +1,26 @@
+[
+  {
+    "id": "1760629270617",
+    "username": "Victor",
+    "email": "colemanvictor25@gmail.com",
+    "password": "e8d2e58dd75cf57364accb06036beac0:a6caa66cbb987f7cc30ccaabc5c581dda3bc0a802df53ffae85c50a380362872c36e598e5668ffcd26094b7b90fcfb5b24c0287f087480fa6374b8a66778ac50",
+    "role": "user",
+    "score": 0,
+    "solvedChallenges": [],
+    "createdAt": "2025-10-16T15:41:10.617Z",
+    "isOnline": false,
+    "lastSeen": "2025-10-16T15:41:10.617Z"
+  },
+  {
+    "id": "1760632326819",
+    "username": "admin",
+    "email": "admin@ctfd.io",
+    "password": "b83d39575f8a47f5408e0992c62996aa:fdd7d03507b347f9aa04904998093c358dd2a11ab78095622a26bf534cd7c55fcc0fe6944e99cbe3139f7fd3157f4e5877243c82d897e7672342ab2d63e6edd2",
+    "role": "admin",
+    "score": 0,
+    "solvedChallenges": [],
+    "createdAt": "2025-10-16T16:32:06.963Z",
+    "isOnline": true,
+    "lastSeen": "2025-10-16T17:51:35.779Z"
+  }
+]

@@ -10,7 +10,7 @@ import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
 import { Label } from "@/components/ui/label"
-import { User, Mail, Lock } from "lucide-react"
+import { TerminalSquare, Mail, Lock, ArrowLeft, AlertTriangle } from "lucide-react"
 
 export default function LoginPage() {
   const [email, setEmail] = useState("")
@@ -41,94 +41,70 @@ export default function LoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#191919] flex items-center justify-center px-4 sm:px-6 lg:px-8">
-      <div className="w-full max-w-lg">
-        <div className="text-center mb-8">
-          <div className="flex justify-center mb-6">
-            <Image src="/litsu-logo.jpg" alt="LITSU" width={120} height={120} className="rounded-lg" />
+    <div className="min-h-screen bg-[#f7fafc] text-[#0a0a0a] flex items-center justify-center px-4">
+      <div className="w-full max-w-lg border border-[#e5e7eb] bg-white shadow-sm">
+        {/* Terminal title bar */}
+        <div className="px-4 py-2 border-b border-[#e5e7eb] flex items-center gap-3">
+          <div className="flex items-center gap-2">
+            <span className="h-3 w-3 rounded-full bg-[#ef4444]"></span>
+            <span className="h-3 w-3 rounded-full bg-[#f59e0b]"></span>
+            <span className="h-3 w-3 rounded-full bg-[#22c55e]"></span>
           </div>
-          <div className="flex items-center justify-center gap-3 mb-4">
-            <User className="h-10 w-10 text-primary" />
-            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase">User Login</h1>
+          <div className="flex items-center gap-2 text-[#334155]">
+            <TerminalSquare className="h-4 w-4" />
+            <span className="font-mono text-xs">auth@litsu:~$ login</span>
           </div>
-          <p className="text-white/60 uppercase tracking-wide text-sm font-bold">LITSU CTF Hackathon Platform</p>
         </div>
-
-        <div className="bg-[#0f0f0f] border-2 border-white/20 p-6 md:p-8 rounded-lg">
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div className="space-y-3">
-              <Label htmlFor="email" className="text-sm uppercase tracking-wide font-bold">
-                Email
-              </Label>
-              <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
-                <Input
-                  id="email"
-                  type="email"
-                  placeholder="user@example.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  className="pl-10 bg-[#1e1e1e] border-2 border-white/20 h-12 font-mono"
-                />
-              </div>
+        <form onSubmit={handleSubmit} className="p-6 space-y-4 font-mono">
+          {error && (
+            <div className="flex items-center gap-2 text-[#b91c1c]">
+              <AlertTriangle className="h-4 w-4" />
+              <span>{error}</span>
             </div>
+          )}
 
-            <div className="space-y-3">
-              <Label htmlFor="password" className="text-sm uppercase tracking-wide font-bold">
-                Password
-              </Label>
-              <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-5 w-5 text-white/40" />
-                <Input
-                  id="password"
-                  type="password"
-                  placeholder="••••••••"
-                  value={password}
-                  onChange={(e) => setPassword(e.target.value)}
-                  required
-                  disabled={isLoading}
-                  className="pl-10 bg-[#1e1e1e] border-2 border-white/20 h-12 font-mono"
-                />
-              </div>
-            </div>
-
-            {error && (
-              <div className="border-2 border-primary bg-primary/10 p-4 rounded-lg">
-                <p className="text-sm font-bold text-primary">{error}</p>
-              </div>
-            )}
-
-            <Button
-              type="submit"
+          <label className="block text-[11px] uppercase tracking-wider text-[#64748b]">email</label>
+          <div className="relative">
+            <Mail className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+            <Input
+              id="email"
+              type="email"
+              placeholder="you@example.com"
+              value={email}
+              onChange={(e) => setEmail(e.target.value)}
+              required
               disabled={isLoading}
-              className="w-full h-12 text-base uppercase tracking-wide font-black"
-            >
-              {isLoading ? "Logging in..." : "Login"}
-            </Button>
-          </form>
-
-          <div className="mt-6 pt-6 border-t-2 border-white/10 space-y-4">
-            <p className="text-sm text-white/60 text-center">
-              Don't have an account?{" "}
-              <Link href="/register" className="text-primary hover:underline font-bold">
-                Register here
-              </Link>
-            </p>
-            <p className="text-sm text-white/60 text-center">
-              Admin user?{" "}
-              <Link href="/admin/login" className="text-primary hover:underline font-bold">
-                Admin Login
-              </Link>
-            </p>
+              className="bg-white text-[#0a0a0a] border-[#e5e7eb] placeholder-[#94a3b8] pl-10"
+            />
           </div>
-        </div>
 
-        <div className="mt-6 text-center">
-          <Link href="/" className="text-sm text-white/60 hover:text-white transition-colors uppercase tracking-wide">
-            ← Back to Home
-          </Link>
+          <label className="block text-[11px] uppercase tracking-wider text-[#64748b] mt-4">password</label>
+          <div className="relative">
+            <Lock className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-[#64748b]" />
+            <Input
+              id="password"
+              type="password"
+              placeholder="••••••••"
+              value={password}
+              onChange={(e) => setPassword(e.target.value)}
+              required
+              disabled={isLoading}
+              className="bg-white text-[#0a0a0a] border-[#e5e7eb] placeholder-[#94a3b8] pl-10"
+            />
+          </div>
+
+          <Button type="submit" disabled={isLoading} className="w-full bg-[#22c55e] hover:bg-[#16a34a] text-white font-bold">
+            {isLoading ? "authenticating..." : "login"}
+          </Button>
+
+          <div className="text-xs text-[#64748b] pt-2">
+            <span>new here? </span>
+            <Link href="/register" className="underline">register</Link>
+          </div>
+        </form>
+        <div className="px-6 py-3 border-t border-[#e5e7eb] text-xs text-[#64748b] flex items-center gap-2">
+          <ArrowLeft className="h-3 w-3" />
+          <Link href="/" className="underline">back</Link>
         </div>
       </div>
     </div>

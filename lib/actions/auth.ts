@@ -1,15 +1,18 @@
 "use server"
 
 import { cookies } from "next/headers"
-import { createUser, getUserByEmail } from "@/lib/db"
+import { createUser, getUserByEmail, updateUser, verifyPassword } from "@/lib/db"
 
 export async function loginAction(email: string, password: string) {
   try {
     const user = await getUserByEmail(email)
 
-    if (!user || user.password !== password) {
+    if (!user || !(await verifyPassword(password, user.password))) {
       return { success: false, error: "Invalid credentials" }
     }
+
+    // Update user status to online
+    await updateUser(user.id, { isOnline: true, lastSeen: new Date().toISOString() })
 
     // Create session (in production, use proper session management)
     const cookieStore = await cookies()
@@ -29,6 +32,7 @@ export async function loginAction(email: string, password: string) {
         role: user.role,
         teamId: user.teamId,
         score: user.score,
+        solvedChallenges: user.solvedChallenges,
       },
     }
   } catch (error) {
