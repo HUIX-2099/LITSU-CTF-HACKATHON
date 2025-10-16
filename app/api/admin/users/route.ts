@@ -2,6 +2,9 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { createUser, getAllUsers, getUserById, updateUser, type User } from "@/lib/db"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 async function requireAdmin() {
   const cookieStore = await cookies()
   const userId = cookieStore.get("user_id")?.value

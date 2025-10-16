@@ -46,9 +46,9 @@ import {
   RefreshCw,
 } from "lucide-react"
 import { Footer } from "@/components/footer"
-import { getAllChallengesAction, deleteChallengeAction } from "@/lib/actions/challenges"
-import { getAllUsersAction, updateUserAction, deleteUserAction } from "@/lib/actions/users"
-import { getTeamsAction, updateTeamAction, deleteTeamAction } from "@/lib/actions/teams"
+import { deleteChallengeAction } from "@/lib/actions/challenges"
+import { updateUserAction, deleteUserAction } from "@/lib/actions/users"
+import { updateTeamAction, deleteTeamAction } from "@/lib/actions/teams"
 import { getAllSubmissionsAction } from "@/lib/actions/scoreboard"
 import type { DBChallenge, User, Team, Submission } from "@/lib/db"
 import { AdminChallengeForm } from "@/components/admin-challenge-form"
@@ -112,16 +112,19 @@ export default function AdminPage() {
 
   const loadData = async () => {
     try {
-      const [challengesRes, usersRes, teamsRes, submissionsRes] = await Promise.all([
-        getAllChallengesAction(),
-        getAllUsersAction(),
-        getTeamsAction(),
+      const [chRes, usRes, tmRes, subRes] = await Promise.all([
+        fetch("/api/admin/challenges", { cache: "no-store" }),
+        fetch("/api/admin/users", { cache: "no-store" }),
+        fetch("/api/admin/teams", { cache: "no-store" }),
         getAllSubmissionsAction(),
       ])
-      if (challengesRes.success && challengesRes.challenges) setChallenges(challengesRes.challenges)
-      if (usersRes.success && usersRes.users) setUsers(usersRes.users as User[])
-      if (teamsRes.success && teamsRes.teams) setTeams(teamsRes.teams as unknown as Team[])
-      if (submissionsRes.success && submissionsRes.submissions) setSubmissions(submissionsRes.submissions)
+
+      const [chJson, usJson, tmJson] = await Promise.all([chRes.json(), usRes.json(), tmRes.json()])
+
+      if (chJson?.success && chJson.challenges) setChallenges(chJson.challenges as DBChallenge[])
+      if (usJson?.success && usJson.users) setUsers(usJson.users as User[])
+      if (tmJson?.success && tmJson.teams) setTeams(tmJson.teams as Team[])
+      if ((subRes as any)?.success && (subRes as any).submissions) setSubmissions((subRes as any).submissions)
     } catch (error) {
       console.error("[v0] Failed to load admin data:", error)
     } finally {

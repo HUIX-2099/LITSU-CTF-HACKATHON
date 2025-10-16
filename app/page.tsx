@@ -18,11 +18,11 @@ export default async function Home() {
     <div className="modern-page">
       <Navbar />
 
-      <main className="container mx-auto px-6 py-16">
+      <main className="container mx-auto px-4 sm:px-6 py-12 sm:py-16">
         {/* Hero Section */}
-        <div className="max-w-7xl mx-auto mb-24">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-center">
-            <div>
+        <div className="max-w-7xl mx-auto mb-16 sm:mb-24">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-8 sm:gap-16 items-center">
+            <div className="min-w-0">
               <div className="flex items-center gap-4 mb-8">
                 <Image src="/litsu-logo.jpg" alt="LITSU" width={80} height={80} className="rounded-lg" />
                 <div>
@@ -31,21 +31,21 @@ export default async function Home() {
                 </div>
               </div>
 
-              <h1 className="modern-h1 mb-8">
-                <span className="block">LITSU</span>
-                <span className="block">CTF HACKATHON</span>
+              <h1 className="modern-h1 mb-6 sm:mb-8 break-words hyphens-auto">
+                <span className="block leading-tight">LITSU</span>
+                <span className="block leading-tight">CTF HACKATHON</span>
               </h1>
 
-              <div className="max-w-2xl mb-12">
-                <p className="modern-prose mb-6">
+              <div className="max-w-2xl mb-8 sm:mb-12">
+                <p className="modern-prose mb-4 sm:mb-6 break-words hyphens-auto">
                   A cybersecurity competition platform designed for Liberian students to develop their skills in ethical hacking, penetration testing, and cybersecurity.
                 </p>
-                <p className="modern-caption">
+                <p className="modern-caption break-words">
                   Built by HUIX-2099. Developed by Victor Edet Coleman.
                 </p>
               </div>
 
-              <div className="modern-section mb-8 max-w-xl">
+              <div className="modern-section mb-6 sm:mb-8 max-w-xl">
                 <div className="modern-label mb-4">Demo Credentials</div>
                 <div className="space-y-3 font-mono text-sm">
                   <div className="flex items-center gap-4">
@@ -67,7 +67,7 @@ export default async function Home() {
                 </div>
               </div>
 
-              <div className="flex items-center gap-4">
+              <div className="flex items-center gap-3 sm:gap-4 flex-wrap">
                 <Link href="/login">
                   <Button className="modern-button">
                     Login to Platform
@@ -78,23 +78,23 @@ export default async function Home() {
               </div>
             </div>
 
-            <div className="relative">
-              <div className="modern-section p-12">
+            <div className="relative min-w-0">
+              <div className="modern-section p-6 sm:p-12">
                 <div className="modern-number text-center mb-8">{year}</div>
                 <div className="modern-h3 text-center mb-8">Cybersecurity Excellence</div>
-                <div className="grid grid-cols-2 gap-8 text-center">
+                <div className="grid grid-cols-2 gap-6 sm:gap-8 text-center">
                   <div>
-                    <div className="modern-number text-4xl">{challenges.length}</div>
+                    <div className="modern-number text-3xl sm:text-4xl">{challenges.length}</div>
                     <div className="modern-label">Challenges</div>
                   </div>
                   <div>
-                    <div className="modern-number text-4xl">{users.length}</div>
+                    <div className="modern-number text-3xl sm:text-4xl">{users.length}</div>
                     <div className="modern-label">Participants</div>
                   </div>
                 </div>
                 <div className="text-center mt-8">
                   <div className="modern-label">Total Solves</div>
-                  <div className="modern-number text-3xl">{totalSolves}</div>
+                  <div className="modern-number text-2xl sm:text-3xl">{totalSolves}</div>
                 </div>
               </div>
             </div>

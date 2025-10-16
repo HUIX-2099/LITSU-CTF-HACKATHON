@@ -18,7 +18,8 @@ export default function ScoreboardPage() {
   const [users, setUsers] = useState<UserType[]>([])
   const [teams, setTeams] = useState<Team[]>([])
   const [loading, setLoading] = useState(true)
-  const [lastUpdated, setLastUpdated] = useState<Date>(new Date())
+  // Avoid hydration mismatch: don't render dynamic time on server
+  const [lastUpdatedText, setLastUpdatedText] = useState<string>("")
 
   useEffect(() => {
     const load = async () => {
@@ -34,7 +35,9 @@ export default function ScoreboardPage() {
         if (usersRes.success && usersRes.users) setUsers(usersRes.users as UserType[])
         if (teamsRes.success && teamsRes.teams) setTeams(teamsRes.teams as unknown as Team[])
         
-        setLastUpdated(new Date())
+        const now = new Date()
+        // Use a consistent, locale-agnostic format or defer rendering until client
+        setLastUpdatedText(now.toLocaleTimeString())
       } catch (error) {
         console.error("Failed to load scoreboard data:", error)
       } finally {
@@ -64,7 +67,7 @@ export default function ScoreboardPage() {
             <div>
               <h1 className="text-6xl font-black tracking-tighter uppercase mb-4">Scoreboard</h1>
               <p className="text-black/60 text-lg">
-                Live rankings • Last updated: {lastUpdated.toLocaleTimeString()}
+                Live rankings • Last updated: {lastUpdatedText || "--:--:--"}
               </p>
             </div>
             <Button
