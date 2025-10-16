@@ -2,6 +2,9 @@ import { NextResponse } from "next/server"
 import { cookies } from "next/headers"
 import { createUser } from "@/lib/db"
 
+export const runtime = "nodejs"
+export const dynamic = "force-dynamic"
+
 export async function POST(req: Request) {
   try {
     const { username, email, password } = await req.json()

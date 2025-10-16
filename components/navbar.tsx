@@ -4,7 +4,7 @@ import Link from "next/link"
 import Image from "next/image"
 import { useAuth } from "@/lib/auth-context"
 import { Button } from "@/components/ui/button"
-import { Shield, User, LogOut, Menu } from "lucide-react"
+import { Shield, User, LogOut, Menu, Flag, Users, Trophy, Info } from "lucide-react"
 import { useState } from "react"
 
 export function Navbar() {
@@ -125,6 +125,38 @@ export function Navbar() {
           </div>
         </div>
       )}
+
+      {/* Mobile bottom tab bar */}
+      <div className="lg:hidden fixed bottom-0 left-0 right-0 z-40 border-t border-[#e5e5e5] bg-white/95 backdrop-blur supports-[backdrop-filter]:bg-white/80">
+        <div className="max-w-screen-md mx-auto px-4 py-2">
+          <div className="grid grid-cols-4 gap-2 text-xs">
+            <Link href="/challenges" className="flex flex-col items-center justify-center py-1">
+              <Flag className="h-5 w-5" />
+              <span>Challenges</span>
+            </Link>
+            <Link href="/scoreboard" className="flex flex-col items-center justify-center py-1">
+              <Trophy className="h-5 w-5" />
+              <span>Scores</span>
+            </Link>
+            <Link href="/teams" className="flex flex-col items-center justify-center py-1">
+              <Users className="h-5 w-5" />
+              <span>Teams</span>
+            </Link>
+            <Link href="/about" className="flex flex-col items-center justify-center py-1">
+              <Info className="h-5 w-5" />
+              <span>About</span>
+            </Link>
+          </div>
+          {user?.role === "admin" && (
+            <div className="mt-2">
+              <Link href="/admin" className="flex items-center justify-center gap-2 py-2 w-full border border-[#e5e5e5] bg-white">
+                <Shield className="h-4 w-4" />
+                <span className="text-xs font-semibold">Admin</span>
+              </Link>
+            </div>
+          )}
+        </div>
+      </div>
     </nav>
   )
 }

@@ -236,8 +236,13 @@ async function loadJson<T>(filePath: string, fallback: T): Promise<T> {
 }
 
 async function saveJson<T>(filePath: string, data: T): Promise<void> {
-  await ensureDataDir()
-  await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf8")
+  try {
+    await ensureDataDir()
+    await fs.writeFile(filePath, JSON.stringify(data, null, 2), "utf8")
+  } catch (err) {
+    // Likely running on a read-only filesystem (e.g., serverless/edge). Silently skip persistence.
+    // console.warn("[db] saveJson skipped (read-only env):", (err as Error)?.message)
+  }
 }
 
 // Load persisted data at module init (best-effort; do not block if fails)
