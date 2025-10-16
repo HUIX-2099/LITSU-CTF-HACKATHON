@@ -28,8 +28,8 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased`} suppressHydrationWarning>
-      <body className="min-h-screen bg-white text-black pb-20 lg:pb-0">
+    <html lang="en" className={`${geistSans.variable} ${geistMono.variable} antialiased overflow-x-hidden`} suppressHydrationWarning>
+      <body className="min-h-screen bg-white text-black pb-20 lg:pb-0 overflow-x-hidden">
         <ThemeProvider attribute="class" defaultTheme="light">
           <AuthProvider>{children}</AuthProvider>
         </ThemeProvider>

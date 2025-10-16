@@ -93,17 +93,17 @@ export function Navbar() {
       {/* Mobile menu */}
       {open && (
         <div className="lg:hidden border-t border-[#e5e5e5] bg-white">
-          <div className="container mx-auto py-3 space-y-2">
-            <div className="flex flex-wrap gap-4">
-              <Link href="/challenges" className="modern-nav-link" onClick={() => setOpen(false)}>Challenges</Link>
-              <Link href="/scoreboard" className="modern-nav-link" onClick={() => setOpen(false)}>Scoreboard</Link>
-              <Link href="/teams" className="modern-nav-link" onClick={() => setOpen(false)}>Teams</Link>
-              <Link href="/about" className="modern-nav-link" onClick={() => setOpen(false)}>About</Link>
+          <div className="container mx-auto py-2">
+            <div className="divide-y divide-[#e5e5e5]">
+              <Link href="/challenges" onClick={() => setOpen(false)} className="block px-3 py-3 text-sm">Challenges</Link>
+              <Link href="/scoreboard" onClick={() => setOpen(false)} className="block px-3 py-3 text-sm">Scoreboard</Link>
+              <Link href="/teams" onClick={() => setOpen(false)} className="block px-3 py-3 text-sm">Teams</Link>
+              <Link href="/about" onClick={() => setOpen(false)} className="block px-3 py-3 text-sm">About</Link>
               {user?.role === "admin" && (
-                <Link href="/admin" className="modern-nav-link" onClick={() => setOpen(false)}>Admin</Link>
+                <Link href="/admin" onClick={() => setOpen(false)} className="block px-3 py-3 text-sm">Admin</Link>
               )}
             </div>
-            <div className="flex items-center justify-between pt-2">
+            <div className="flex items-center justify-between pt-3 px-3">
               {user ? (
                 <>
                   <div className="font-bold text-sm">{user.username} · {user.score} PTS</div>
@@ -113,11 +113,11 @@ export function Navbar() {
                 </>
               ) : (
                 <div className="flex items-center gap-3">
-                  <Link href="/login" onClick={() => setOpen(false)}>
-                    <Button variant="outline" size="sm" className="modern-button-outline text-xs">Login</Button>
+                  <Link href="/login" onClick={() => setOpen(false)} className="block">
+                    <Button variant="outline" size="sm" className="modern-button-outline text-xs px-4">Login</Button>
                   </Link>
-                  <Link href="/register" onClick={() => setOpen(false)}>
-                    <Button size="sm" className="modern-button text-xs">Register</Button>
+                  <Link href="/register" onClick={() => setOpen(false)} className="block">
+                    <Button size="sm" className="modern-button text-xs px-4">Register</Button>
                   </Link>
                 </div>
               )}
